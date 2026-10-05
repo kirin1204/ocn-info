@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>OCN遠隔ラウンダー お知らせ</title>
+<style>
+  :root {
+    --navy: #0B2545;
+    --cyan: #00A3E0;
+    --tint: #EAF6FD;
+    --red: #D81E42;
+    --text: #1F2A37;
+    --muted: #6B7580;
+    --line: #DDE3EA;
+    --ok: #0E8A4F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #F4F7FA;
+    color: var(--text);
+    font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", sans-serif;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; background: #fff; min-height: 100vh; }
+  header { background: var(--navy); color: #fff; padding: 28px 20px 24px; }
+  .tag {
+    display: inline-block; background: var(--cyan); border-radius: 999px;
+    padding: 3px 14px; font-size: 12px; font-weight: 700; letter-spacing: .08em;
+  }
+  header h1 { margin: 14px 0 4px; font-size: 24px; line-height: 1.35; }
+  header p { margin: 0; font-size: 13px; opacity: .85; }
+  main { padding: 20px 16px 32px; }
+  section { margin-top: 28px; }
+  section:first-child { margin-top: 0; }
+  header h1, h2 { text-wrap: balance; }
+  h2 {
+    margin: 0 0 12px; padding-left: 10px; border-left: 5px solid var(--cyan);
+    font-size: 17px; line-height: 1.3;
+  }
+
+  /* 今日の受付状況 */
+  .status { border: 2px solid var(--navy); border-radius: 14px; padding: 18px 16px; }
+  .status .label { font-size: 12px; color: var(--muted); font-weight: 700; }
+  .status .now { margin: 2px 0 6px; font-size: 26px; font-weight: 700; line-height: 1.3; }
+  .status.open .now { color: var(--ok); }
+  .status.closed .now { color: var(--red); }
+  .status .detail { margin: 0; font-size: 14px; }
+  .notice {
+    margin-top: 12px; background: #FFF4F6; border-left: 4px solid var(--red);
+    padding: 10px 12px; font-size: 14px; border-radius: 0 8px 8px 0;
+  }
+  .notice:empty { display: none; }
+
+  /* ボタン */
+  .btn {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    margin-top: 12px; padding: 16px; border-radius: 14px;
+    text-decoration: none; font-weight: 700;
+  }
+  .btn .icon {
+    flex: none; width: 44px; height: 44px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 12px; letter-spacing: .04em;
+  }
+  .btn .main { display: block; font-size: 19px; line-height: 1.3; }
+  .btn .sub { display: block; font-size: 12px; font-weight: 400; opacity: .9; }
+  .btn.tel { background: var(--navy); color: #fff; }
+  .btn.tel .icon { background: var(--red); color: #fff; }
+  .btn.meet { background: var(--tint); color: var(--navy); border: 1.5px solid var(--cyan); }
+  .btn.meet .icon { background: var(--cyan); color: #fff; }
+  .btn.form { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
+  .btn.form .icon { background: var(--navy); color: #fff; }
+  .hint { margin: 10px 2px 0; font-size: 12.5px; color: var(--muted); }
+
+  /* お知らせ */
+  #news { list-style: none; margin: 0; padding: 0; }
+  #news li { padding: 12px 2px; border-bottom: 1px solid var(--line); }
+  #news li:first-child { border-top: 1px solid var(--line); }
+  #news .meta { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); }
+  #news .new { background: var(--red); color: #fff; border-radius: 4px; padding: 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+  #news .title { margin: 2px 0 0; font-size: 15.5px; font-weight: 700; line-height: 1.45; }
+  #news .body { margin: 2px 0 0; font-size: 13.5px; }
+  #news .empty { color: var(--muted); font-size: 14px; }
+
+  /* 受付予定 */
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  td { padding: 9px 6px; border-bottom: 1px solid var(--line); }
+  td.d { width: 42%; font-weight: 700; }
+  td.s { font-weight: 700; }
+  tr.off td { color: var(--muted); }
+  tr.off td.s { font-weight: 400; }
+  tr.temp td.s { color: var(--red); }
+  tr.today td { background: var(--tint); }
+  .sat { color: #1668B8; } .sun { color: var(--red); }
+
+  ul.notes { margin: 0; padding-left: 1.2em; font-size: 13.5px; color: var(--text); }
+  ul.notes li { margin-top: 6px; }
+  footer {
+    background: var(--navy); color: #fff; text-align: center;
+    padding: 16px; font-size: 12px; opacity: .95;
+  }
+
+  /* タブレット・パソコン（横幅720px以上）：2列に並べる */
+  @media (min-width: 720px) {
+    .wrap { max-width: 980px; }
+    header { padding: 36px 32px 30px; }
+    header h1 { font-size: 30px; }
+    header h1 br { display: none; }
+    header p { font-size: 15px; }
+    main {
+      padding: 28px 32px 40px;
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 32px 36px; align-items: start;
+    }
+    section { margin-top: 0; min-width: 0; }
+    main > section { grid-column: 1; }
+    main > section.schedule { grid-column: 2; grid-row: 1 / span 3; }
+    main > section:last-child { grid-column: 1 / -1; }
+    #news .title { font-size: 16.5px; }
+    #news .body { font-size: 14.5px; }
+    .status .now { font-size: 30px; }
+    .btn .main { font-size: 21px; }
+    .btn .sub, .hint { font-size: 13.5px; }
+    table { font-size: 16px; }
+    ul.notes { font-size: 14.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="tag">ドコモショップ スタッフ専用</span>
+    <h1>OCN遠隔ラウンダー<br>お知らせ</h1>
+    <p>ドコモ光・OCNの疑問に、電話とテレビ電話でお答えします</p>
+  </header>
+
+  <main>
+    <section>
+      <div id="status" class="status">
+        <div class="label" id="todayLabel"></div>
+        <div class="now" id="now"></div>
+        <p class="detail" id="detail"></p>
+      </div>
+      <div class="notice" id="notice"></div>
+
+      <a class="btn tel" id="telBtn">
+        <span class="icon">TEL</span>
+        <span><span class="main" id="telText"></span><span class="sub">タップすると電話がかかります</span></span>
+      </a>
+      <a class="btn meet" id="meetBtn" target="_blank" rel="noopener">
+        <span class="icon">顔</span>
+        <span><span class="main">テレビ電話で相談する</span><span class="sub">（準備中です）</span></span>
+      </a>
+      <p class="hint">1名で応対しています。出られない時は、着信を確認して折り返しお電話します。テレビ電話は、入室のお知らせを確認してからおつなぎするので、少しお待ちいただくことがあります。</p>
+    </section>
+
+    <section class="news">
+      <h2>お知らせ</h2>
+      <ul id="news"></ul>
+    </section>
+
+    <section class="schedule">
+      <h2>これからの受付予定</h2>
+      <table id="schedule"></table>
+      <p class="hint">受付は 木・金・土・日・月 の 10:00〜18:00 です。急な事情でお休みをいただく日は、このページでお知らせします。</p>
+    </section>
+
+    <section>
+      <h2>プチ研修のお申し込み</h2>
+      <a class="btn form" id="formBtn" target="_blank" rel="noopener">
+        <span class="icon">研修</span>
+        <span><span class="main">プチ研修を申し込む</span><span class="sub">（準備中です）</span></span>
+      </a>
+    </section>
+
+    <section>
+      <h2>ご利用にあたって</h2>
+      <ul class="notes">
+        <li>お客様の契約情報の確認はできません（必要な場合は正しい窓口をご案内します）。</li>
+        <li>他社サービスについては、お答えできる範囲が限られます。</li>
+        <li>お休みの日にいただいたお電話は、次の受付日に折り返します。</li>
+      </ul>
+    </section>
+  </main>
+  <footer>OCN遠隔ラウンダー　応対：宇土</footer>
+</div>
+
+<script>
+// ── 基本設定（スプレッドシートが読めない時も、この内容で表示されます）──
+const SHEET_ID = "13Idmg2VwsZIGfKqTK73NjxPm_s2PJr0-JtUrUmsrRWo";  // 「OCNお知らせサイト_設定」
+const CONFIG = {
+  tel: "070-5071-6361",
+  meetUrl: "",
+  formUrl: "",
+  openDays: [4, 5, 6, 0, 1],   // 0=日 1=月 … 6=土（受付は木金土日月）
+  hours: ["10:00", "18:00"],
+  tempClosed: {},              // 臨時のお休み（スプレッドシートの「お休み」タブから読み込み）
+  notice: "",
+  news: [                      // お知らせ（スプレッドシートの「お知らせ」タブが読めた時はそちらを表示）
+    { date: "2026-10-05", title: "OCNのルーターに新しい機種が登場しました", body: "（見本用の文面です。実際のお知らせの内容に差し替えます）" },
+    { date: "2026-10-05", title: "10月8日（木）から本格的に受付を始めます", body: "受付は 木・金・土・日・月 の 10:00〜18:00 です。接客中のご質問も、お気軽にお電話ください。" }
+  ]
+};
+// ─────────────────────────────────────────────────────────────
+
+const W = ["日", "月", "火", "水", "木", "金", "土"];
+const $ = id => document.getElementById(id);
+const key = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const label = d => `${d.getMonth() + 1}月${d.getDate()}日（${W[d.getDay()]}）`;
+const kind = d => (key(d) in CONFIG.tempClosed) ? "temp" : (CONFIG.openDays.includes(d.getDay()) ? "open" : "off");
+const mins = t => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+const safeUrl = u => /^https:\/\//.test(u || "") ? u : "";
+
+function render() {
+  const now = new Date();
+  const addDays = n => { const d = new Date(now); d.setDate(d.getDate() + n); return d; };
+  const nextOpen = () => { for (let i = 1; i < 31; i++) { const d = addDays(i); if (kind(d) === "open") return d; } return null; };
+
+  const k = kind(now), cur = now.getHours() * 60 + now.getMinutes();
+  const [o, c] = CONFIG.hours.map(mins);
+  let head, detail, isOpen = false;
+  if (k === "open" && cur >= o && cur < c) {
+    isOpen = true; head = "受付中です"; detail = `本日は ${CONFIG.hours[1]} まで受け付けています。`;
+  } else if (k === "open" && cur < o) {
+    head = "まもなく受付開始"; detail = `本日は ${CONFIG.hours[0]}〜${CONFIG.hours[1]} に受け付けます。`;
+  } else {
+    const n = nextOpen();
+    head = k === "temp" ? "本日はお休みです" : (k === "off" ? "本日は定休日です" : "本日の受付は終了しました");
+    detail = n ? `次の受付は ${label(n)} ${CONFIG.hours[0]}〜 です。` : "";
+    if (k === "temp" && CONFIG.tempClosed[key(now)]) detail = CONFIG.tempClosed[key(now)] + "　" + detail;
+  }
+  const box = $("status");
+  box.classList.remove("open", "closed"); box.classList.add(isOpen ? "open" : "closed");
+  $("todayLabel").textContent = `今日の受付状況　${label(now)}`;
+  $("now").textContent = head;
+  $("detail").textContent = detail;
+  $("notice").textContent = CONFIG.notice;
+
+  $("telText").textContent = CONFIG.tel;
+  $("telBtn").href = "tel:" + CONFIG.tel.replace(/-/g, "");
+  const subs = { meetBtn: "Google Meet が開きます（受付時間内）", formBtn: "15〜30分／店頭・Web　内容は店舗様のご要望に合わせます" };
+  for (const [id, url] of [["meetBtn", safeUrl(CONFIG.meetUrl)], ["formBtn", safeUrl(CONFIG.formUrl)]]) {
+    const a = $(id);
+    if (url) { a.href = url; a.querySelector(".sub").textContent = subs[id]; }
+    else { a.removeAttribute("href"); a.querySelector(".sub").textContent = "（準備中です）"; }
+  }
+
+  const rows = [];
+  for (let i = 0; i < 14; i++) {
+    const d = addDays(i), kd = kind(d);
+    const cls = [kd === "open" ? "" : (kd === "temp" ? "off temp" : "off"), i === 0 ? "today" : ""].join(" ").trim();
+    const wd = d.getDay() === 0 ? "sun" : (d.getDay() === 6 ? "sat" : "");
+    const text = kd === "open" ? `${CONFIG.hours[0]}〜${CONFIG.hours[1]}` : (kd === "temp" ? "お休み（臨時）" : "定休日");
+    rows.push(`<tr class="${cls}"><td class="d">${d.getMonth() + 1}/${d.getDate()}<span class="${wd}">（${W[d.getDay()]}）</span>${i === 0 ? "　今日" : ""}</td><td class="s">${text}</td></tr>`);
+  }
+  $("schedule").innerHTML = rows.join("");
+
+  const esc = t => String(t).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  const items = CONFIG.news.filter(n => n.title).sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 5);
+  $("news").innerHTML = items.length ? items.map(n => {
+    const d = n.date ? new Date(n.date + "T00:00:00") : null;
+    const isNew = d && (now - d) / 86400000 < 7 && now >= d;
+    return `<li><div class="meta">${d ? `<span>${d.getFullYear()}年${label(d)}</span>` : ""}${isNew ? '<span class="new">NEW</span>' : ""}</div><p class="title">${esc(n.title)}</p>${n.body ? `<p class="body">${esc(n.body)}</p>` : ""}</li>`;
+  }).join("") : '<li class="empty">現在、お知らせはありません。</li>';
+}
+
+// ── スプレッドシートから「一言お知らせ・URL・臨時のお休み」を読み込む ──
+function parseCsv(text) {
+  const rows = []; let row = [], cell = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === ",") { row.push(cell); cell = ""; }
+    else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+    else if (ch !== "\r") cell += ch;
+  }
+  row.push(cell); rows.push(row);
+  return rows;
+}
+function parseDate(v) {
+  let m = /(\d{4})\D+(\d{1,2})\D+(\d{1,2})/.exec(v);
+  if (m) return `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
+  m = /(\d{1,2})\D+(\d{1,2})/.exec(v);
+  if (!m) return null;
+  const now = new Date(); let y = now.getFullYear();
+  if (Number(m[1]) < now.getMonth() + 1 - 6) y += 1;   // 年をまたぐ日付（12月に「1/4」など）
+  return `${y}-${m[1].padStart(2, "0")}-${m[2].padStart(2, "0")}`;
+}
+async function loadSheet(name) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(name)}&t=${Date.now()}`;
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(res.status);
+  const text = await res.text();
+  if (/^\s*</.test(text)) throw new Error("not csv");   // 共有されていないとログイン画面が返る
+  return parseCsv(text).slice(1);
+}
+async function loadFromSheet() {
+  try {
+    const [settings, closed] = await Promise.all([loadSheet("設定"), loadSheet("お休み")]);
+    const get = k => ((settings.find(r => (r[0] || "").trim() === k) || [])[1] || "").trim();
+    CONFIG.notice = get("一言お知らせ");
+    CONFIG.meetUrl = get("テレビ電話URL");
+    CONFIG.formUrl = get("プチ研修申込URL");
+    const t = {};
+    for (const r of closed) { const d = parseDate((r[0] || "").trim()); if (d) t[d] = (r[1] || "").trim(); }
+    CONFIG.tempClosed = t;
+    try {
+      const news = await loadSheet("お知らせ");
+      CONFIG.news = news.map(r => ({ date: parseDate((r[0] || "").trim()) || "", title: (r[1] || "").trim(), body: (r[2] || "").trim() }));
+    } catch (e) { /* お知らせタブが読めない時は内蔵の内容のまま */ }
+    render();
+  } catch (e) { /* 読めない時は基本設定のまま表示を続ける */ }
+}
+
+render();
+loadFromSheet();
+setInterval(render, 60 * 1000);              // 開きっぱなしでも受付状況が切り替わる
+setInterval(loadFromSheet, 5 * 60 * 1000);   // 5分ごとにお知らせを読み直す
+</script>
+</body>
+</html>
