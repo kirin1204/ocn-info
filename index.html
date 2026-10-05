@@ -96,8 +96,21 @@
   tr.today td { background: var(--tint); }
   .sat { color: #1668B8; } .sun { color: var(--red); }
 
+  /* お客様へのご案内に使えるリンク */
+  .cards { display: grid; gap: 24px; }
+  .cards > div { min-width: 0; }
+  h3 { margin: 0 0 2px; font-size: 15.5px; line-height: 1.4; color: var(--navy); }
+  .cards .btn { padding: 13px 16px; }
+  .cards .btn .main { font-size: 16.5px; }
+  .telbox { margin-top: 12px; background: var(--tint); border-radius: 12px; padding: 12px 14px; font-size: 13.5px; }
+  .telbox a { display: inline-block; font-size: 21px; font-weight: 700; color: var(--navy); text-decoration: none; line-height: 1.3; }
+  .telbox span { display: block; }
+  ol.steps { margin: 12px 0 0; padding-left: 1.4em; font-size: 13.5px; }
+  ol.steps li { margin-top: 6px; }
+
   ul.notes { margin: 0; padding-left: 1.2em; font-size: 13.5px; color: var(--text); }
   ul.notes li { margin-top: 6px; }
+  ul.notes a { color: var(--navy); font-weight: 700; white-space: nowrap; }
   footer {
     background: var(--navy); color: #fff; text-align: center;
     padding: 16px; font-size: 12px; opacity: .95;
@@ -118,7 +131,12 @@
     section { margin-top: 0; min-width: 0; }
     main > section { grid-column: 1; }
     main > section.schedule { grid-column: 2; grid-row: 1 / span 3; }
-    main > section:last-child { grid-column: 1 / -1; }
+    main > section.links, main > section:last-child { grid-column: 1 / -1; }
+    .cards { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 36px; }
+    h3 { font-size: 17px; }
+    .cards .btn .main { font-size: 18px; }
+    .telbox, ol.steps { font-size: 14.5px; }
+    .telbox a { font-size: 24px; }
     #news .title { font-size: 16.5px; }
     #news .body { font-size: 14.5px; }
     .status .now { font-size: 30px; }
@@ -165,7 +183,7 @@
     <section class="schedule">
       <h2>これからの受付予定</h2>
       <table id="schedule"></table>
-      <p class="hint">受付は 木・金・土・日・月 の 10:00〜18:00 です。急な事情でお休みをいただく日は、このページでお知らせします。</p>
+      <p class="hint">受付は、基本的に 木・金・土・日・月 の 10:00〜18:00 です。急な事情で不在にする日は、このページでお知らせします。</p>
     </section>
 
     <section>
@@ -176,12 +194,58 @@
       </a>
     </section>
 
+    <section class="links">
+      <h2>お客様へのご案内に使えるリンク</h2>
+      <div class="cards">
+        <div>
+          <h3>Wi-Fiルーターのお申し込み</h3>
+          <a class="btn form" href="https://service.ocn.ne.jp/hikari/ocn-internet/router/" target="_blank" rel="noopener">
+            <span class="icon">1G</span>
+            <span><span class="main">1ギガ：ルーターレンタル</span><span class="sub">開いたページの「お申込み」から進みます</span></span>
+          </a>
+          <a class="btn form" href="https://service.ocn.ne.jp/hikari/ocn-internet/router/10g.html" target="_blank" rel="noopener">
+            <span class="icon">10G</span>
+            <span><span class="main">10ギガ：ルーター優待販売</span><span class="sub">開いたページの「お申込み」から進みます</span></span>
+          </a>
+          <ul class="notes" style="margin-top:12px">
+            <li>工事日の4日前までのお申し込みは、工事日までにお届け。3日前以降・工事後のお申し込みは、お申し込みから3〜4日後が目安です。</li>
+            <li>10ギガの優待販売は代金引換（現金のみ）です。代引手数料はドコモが負担します。</li>
+            <li>後日お客様が電話で申し込む場合：OCN総合窓口 <a href="tel:0120506506">0120-506-506</a>（ガイダンス ①→①→①→①／10:00〜19:00、土日祝は休業）。「OCN会員登録証」をお手元に。</li>
+          </ul>
+        </div>
+        <div>
+          <h3>訪問サポート（OCN開通とことんサポート）</h3>
+          <a class="btn form" href="https://service.ocn.ne.jp/hikari/tokoton/" target="_blank" rel="noopener">
+            <span class="icon">訪問</span>
+            <span><span class="main">訪問サポートを申し込む</span><span class="sub">開いたページの「お申込みフォーム」から進みます</span></span>
+          </a>
+          <ol class="steps">
+            <li>「OCN会員登録証」が届いたら申し込めます。「光回線の工事日」と「お客さま番号」を手元に用意します。</li>
+            <li>先にルーターを手配します（レンタル・優待販売、またはお客様ご自身でご用意）。</li>
+            <li>上のボタンでページを開き、「お申込みフォーム」から申し込みます。</li>
+            <li>訪問日を予約します（回線工事日の翌日以降、かつ申込日から6日目以降）。</li>
+            <li>訪問日の前日までに、訪問スタッフから最終確認の電話があります。当日は「OCN会員登録証」をご用意ください。</li>
+          </ol>
+          <div class="telbox">
+            <span>電話で申し込む場合</span>
+            <a href="tel:0120047860">0120-047-860</a>
+            <span>ガイダンスのあと「3」→「1」</span>
+            <span>10:00〜17:00（年末年始を除く）</span>
+          </div>
+          <ul class="notes" style="margin-top:12px">
+            <li>工事日の間際だとご希望の日に沿えないことがあります。お早めのお申し込みを。</li>
+            <li>初回訪問サポートは、開通後6か月以内にご利用ください。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section>
       <h2>ご利用にあたって</h2>
       <ul class="notes">
         <li>お客様の契約情報の確認はできません（必要な場合は正しい窓口をご案内します）。</li>
         <li>他社サービスについては、お答えできる範囲が限られます。</li>
-        <li>お休みの日にいただいたお電話は、次の受付日に折り返します。</li>
+        <li>不在の日は、時間をおいてお電話いただくか、後日あらためてご連絡ください。</li>
       </ul>
     </section>
   </main>
@@ -202,8 +266,7 @@ const CONFIG = {
   tempClosed: {},              // 臨時のお休み（スプレッドシートの「お休み」タブから読み込み）
   notice: "",
   news: [                      // お知らせ（スプレッドシートの「お知らせ」タブが読めた時はそちらを表示）
-    { date: "2026-10-05", title: "OCNのルーターに新しい機種が登場しました", body: "（見本用の文面です。実際のお知らせの内容に差し替えます）" },
-    { date: "2026-10-05", title: "10月8日（木）から本格的に受付を始めます", body: "受付は 木・金・土・日・月 の 10:00〜18:00 です。接客中のご質問も、お気軽にお電話ください。" }
+    { date: "2026-10-05", title: "10月8日（木）から本格的に受付を始めます", body: "受付は、基本的に 木・金・土・日・月 の 10:00〜18:00 です。接客中のご質問も、お気軽にお電話ください。" }
   ]
 };
 // ─────────────────────────────────────────────────────────────
@@ -230,7 +293,7 @@ function render() {
     head = "まもなく受付開始"; detail = `本日は ${CONFIG.hours[0]}〜${CONFIG.hours[1]} に受け付けます。`;
   } else {
     const n = nextOpen();
-    head = k === "temp" ? "本日はお休みです" : (k === "off" ? "本日は定休日です" : "本日の受付は終了しました");
+    head = k === "temp" ? "本日は不在です" : (k === "off" ? "本日は定休日です" : "本日の受付は終了しました");
     detail = n ? `次の受付は ${label(n)} ${CONFIG.hours[0]}〜 です。` : "";
     if (k === "temp" && CONFIG.tempClosed[key(now)]) detail = CONFIG.tempClosed[key(now)] + "　" + detail;
   }
@@ -259,7 +322,7 @@ function render() {
     const d = addDays(i), kd = kind(d);
     const cls = [kd === "open" ? "" : (kd === "temp" ? "off temp" : "off"), i === 0 ? "today" : ""].join(" ").trim();
     const wd = d.getDay() === 0 ? "sun" : (d.getDay() === 6 ? "sat" : "");
-    const text = kd === "open" ? `${CONFIG.hours[0]}〜${CONFIG.hours[1]}` : (kd === "temp" ? "お休み（臨時）" : "定休日");
+    const text = kd === "open" ? `${CONFIG.hours[0]}〜${CONFIG.hours[1]}` : (kd === "temp" ? "不在（臨時）" : "定休日");
     rows.push(`<tr class="${cls}"><td class="d">${d.getMonth() + 1}/${d.getDate()}<span class="${wd}">（${W[d.getDay()]}）</span>${i === 0 ? "　今日" : ""}</td><td class="s">${text}</td></tr>`);
   }
   $("schedule").innerHTML = rows.join("");
