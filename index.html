@@ -72,6 +72,7 @@
   .btn.meet .icon { background: var(--cyan); color: #fff; }
   .btn.form { background: #fff; color: var(--navy); border: 1.5px solid var(--navy); }
   .btn.form .icon { background: var(--navy); color: #fff; }
+  .btn.disabled { opacity: .55; }
   .hint { margin: 10px 2px 0; font-size: 12.5px; color: var(--muted); }
 
   /* お知らせ */
@@ -153,7 +154,7 @@
         <span class="icon">顔</span>
         <span><span class="main">テレビ電話で相談する</span><span class="sub">（準備中です）</span></span>
       </a>
-      <p class="hint">1名で応対しています。出られない時は、着信を確認して折り返しお電話します。テレビ電話は、入室のお知らせを確認してからおつなぎするので、少しお待ちいただくことがあります。</p>
+      <p class="hint">1名で応対しています。出られない時は、着信を確認して折り返しお電話します。テレビ電話は 10:00〜18:00 にご利用いただけます。入室のお知らせを確認してからおつなぎするので、少しお待ちいただくことがあります。</p>
     </section>
 
     <section class="news">
@@ -192,7 +193,9 @@
 const SHEET_ID = "13Idmg2VwsZIGfKqTK73NjxPm_s2PJr0-JtUrUmsrRWo";  // 「OCNお知らせサイト_設定」
 const CONFIG = {
   tel: "070-5071-6361",
-  meetUrl: "",
+  meetUrl: "https://meet.google.com/dyn-zhwr-iks",
+  meetHours: ["09:00", "19:00"],   // テレビ電話のボタンが実際に使える時間（毎日）
+  meetNotice: ["10:00", "18:00"],  // 画面に案内として表示する時間
   formUrl: "",
   openDays: [4, 5, 6, 0, 1],   // 0=日 1=月 … 6=土（受付は木金土日月）
   hours: ["10:00", "18:00"],
@@ -240,11 +243,15 @@ function render() {
 
   $("telText").textContent = CONFIG.tel;
   $("telBtn").href = "tel:" + CONFIG.tel.replace(/-/g, "");
-  const subs = { meetBtn: "Google Meet が開きます（受付時間内）", formBtn: "15〜30分／店頭・Web　内容は店舗様のご要望に合わせます" };
+  const [mo, mc] = CONFIG.meetHours.map(mins);
+  const meetOpen = cur >= mo && cur < mc;
+  const meetSpan = `${CONFIG.meetNotice[0]}〜${CONFIG.meetNotice[1]}`;
+  const subs = { meetBtn: `Google Meet が開きます（${meetSpan}）`, formBtn: "15〜30分／店頭・Web　内容は店舗様のご要望に合わせます" };
   for (const [id, url] of [["meetBtn", safeUrl(CONFIG.meetUrl)], ["formBtn", safeUrl(CONFIG.formUrl)]]) {
-    const a = $(id);
-    if (url) { a.href = url; a.querySelector(".sub").textContent = subs[id]; }
-    else { a.removeAttribute("href"); a.querySelector(".sub").textContent = "（準備中です）"; }
+    const a = $(id), closedNow = id === "meetBtn" && url && !meetOpen;
+    a.classList.toggle("disabled", !url || closedNow);
+    if (url && !closedNow) { a.href = url; a.querySelector(".sub").textContent = subs[id]; }
+    else { a.removeAttribute("href"); a.querySelector(".sub").textContent = closedNow ? `ただいま時間外です（${meetSpan}）` : "（準備中です）"; }
   }
 
   const rows = [];
@@ -302,7 +309,7 @@ async function loadFromSheet() {
     const [settings, closed] = await Promise.all([loadSheet("設定"), loadSheet("お休み")]);
     const get = k => ((settings.find(r => (r[0] || "").trim() === k) || [])[1] || "").trim();
     CONFIG.notice = get("一言お知らせ");
-    CONFIG.meetUrl = get("テレビ電話URL");
+    CONFIG.meetUrl = get("テレビ電話URL") || CONFIG.meetUrl;
     CONFIG.formUrl = get("プチ研修申込URL");
     const t = {};
     for (const r of closed) { const d = parseDate((r[0] || "").trim()); if (d) t[d] = (r[1] || "").trim(); }
